@@ -144,7 +144,7 @@ fun CustomHintDialog(
                                             color = Color(0xFFD8B07A)
                                         )
                                         .clickable {
-
+                                            onRevelLetter()
                                         }
                                 ) {
                                     Column(
@@ -212,7 +212,7 @@ fun CustomHintDialog(
                                             color = Color(0xFFD8B07A)
                                         )
                                         .clickable {
-
+                                            onRevelWord()
                                         }
                                 ) {
                                     Column(

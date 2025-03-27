@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,17 +38,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
-import com.pycreations.wordgame.data.wordForm.DataList
-import com.pycreations.wordgame.data.wordForm.LevelModel
+import com.pycreations.wordgame.data.sentenceForm.SentenceData
+import com.pycreations.wordgame.data.sentenceForm.SentenceModel
 import com.pycreations.wordgame.databse.BackgroundMusicManager
 import com.pycreations.wordgame.databse.SharedPrefFunctions
 import com.pycreations.wordgame.databse.SoundManager
@@ -68,22 +68,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
-fun PlayBoardScr(navHostController: NavHostController, context: Context) {
+fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController) {
     var enteredWord by remember { mutableStateOf("") }
-    var currentLevel by remember { mutableIntStateOf(SharedPrefFunctions.getCurrentLevelWordFormation(context)) }
-    var eligibleToNextLevel by remember { mutableIntStateOf(0) }
+    var currentLevel by remember {
+        mutableIntStateOf(
+            SharedPrefFunctions.getCurrentLevelWordSentence(
+                context
+            )
+        )
+    }
+
     var levelData by remember { mutableStateOf(updateLevel(currentLevel)) }
-    var cc by remember { mutableStateOf(SharedPrefFunctions.getCoins(context)) }
+    var cc by remember { mutableIntStateOf(SharedPrefFunctions.getCoins(context)) }
     var givenCharacters by remember { mutableStateOf(levelData.givenCharacters) }
-
-    var isTouchEnable by remember { mutableStateOf(true) }
-
-    val submittedWords = remember { mutableStateListOf<String>() } // Stores submitted words
     var borderBoxSize by remember { mutableStateOf(getBorderBoxSize(givenCharacters.size)) }
+
+    val soundManager = SoundManager(context)
+    val musicSP = context.getSharedPreferences(SharedPrefFunctions.MUSIC_DB, Context.MODE_PRIVATE)
 
     var showToHomeDialog by remember { mutableStateOf(false) }
     var showSettingDialog by remember { mutableStateOf(false) }
@@ -97,14 +100,9 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
 
     var h by remember {
         mutableStateOf(
-            getHint(
-                targetWords = levelData.targetWords, submittedWords
-            )
+            levelData.targetWord
         )
     }
-
-    val soundManager = SoundManager(context)
-    val musicSP = context.getSharedPreferences(SharedPrefFunctions.MUSIC_DB, Context.MODE_PRIVATE)
 
     if (showAdsDialog) {
         CustomAdsOptionDialog(onDismiss = {
@@ -165,6 +163,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
         })
     }
 
+
     if (showToHomeDialog) {
         CustomExitDialog("Do want to exit ?", onYes = {
             // perform exit operation
@@ -207,14 +206,11 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
             navHostController.navigateUp()
         }, onNext = {
             soundManager.playTapSound()
-            isTouchEnable = false
             currentLevel++
             levelData = updateLevel(currentLevel)
             givenCharacters = levelData.givenCharacters
             borderBoxSize = getBorderBoxSize(givenCharacters.size)
             givenCharacters.shuffled()
-            submittedWords.clear()
-            eligibleToNextLevel = 0
             showNextLevelDialog = false
         })
     }
@@ -355,52 +351,23 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .padding(top = 40.dp),
-                        contentAlignment = Alignment.TopCenter
+                            .padding(horizontal = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(if (levelData.targetWords.size > 3) levelData.targetWords.takeLast(4) else levelData.targetWords) { word ->
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    items(word.toCharArray().toTypedArray()) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(50.dp)
-                                                .clip(RoundedCornerShape(8.dp))
-//                                                .background(color = Color(0xFFA96E3C))
-                                                .border(
-                                                    2.dp,
-                                                    Color(0xFFA96E3C),
-                                                    RoundedCornerShape(8.dp)
-                                                ) // Dark border
-                                        ) {
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .padding(top = 45.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(18.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(submittedWords) { word ->
-                                LazyRow(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-                                    items(word.toCharArray().toTypedArray()) {
-                                        WoodenBlockShow(it.uppercaseChar())
-                                    }
-                                }
-                            }
-                        }
+                        Text(
+                            levelData.sentence,
+                            color = Color(0xFF3B2314), // Dark text like engraving
+                            style = TextStyle(
+                                shadow = Shadow(
+                                    color = Color.Black.copy(alpha = 0.4f),
+                                    offset = Offset(2f, 2f),
+                                    blurRadius = 2f
+                                )
+                            ),
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.boolagoo_regular)),
+                            textAlign = TextAlign.Center,
+                        )
                     }
                 }
                 Column(
@@ -480,38 +447,30 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                                 color = Color(0xFFD8B07A)
                                             ), contentAlignment = Alignment.Center
                                     ) {
-                                        DragSelectionWoodenBlocks2(givenCharacters,
+                                        val charList = givenCharacters.flatMap { it.toList() }
+                                        DragSelectionWoodenBlocks3(charList,
                                             isTouchEnable = true,
                                             onCharacterClick = { selectedChar ->
                                                 enteredWord += selectedChar
                                             },
                                             onDragEnd = {
                                                 if (checkMatch(
-                                                        levelData.targetWords, enteredWord
-                                                    ) && checkDuplicate(
-                                                        submittedWords, enteredWord
+                                                        levelData.targetWord, enteredWord
                                                     )
                                                 ) {
-                                                    submittedWords.add(enteredWord) // Store the submitted word
-                                                    h = getHint(
-                                                        targetWords = levelData.targetWords,
-                                                        submittedWords
+                                                    soundManager.playLevelCompleteSound()
+                                                    SharedPrefFunctions.updateLevelWordSentence(
+                                                        context
                                                     )
-                                                    eligibleToNextLevel++
-                                                    if (eligibleToNextLevel >= levelData.noOfInputFields) {
-                                                        soundManager.playLevelCompleteSound()
-                                                        SharedPrefFunctions.updateLevelWordFormation(context)
-                                                        CoroutineScope(Dispatchers.IO).launch {
-                                                            delay(500)
-                                                            cc =
-                                                                SharedPrefFunctions.getCoins(context)
-                                                            showNextLevelDialog = true
-                                                        }
+                                                    CoroutineScope(Dispatchers.IO).launch {
+                                                        delay(500)
+                                                        cc =
+                                                            SharedPrefFunctions.getCoins(context)
+                                                        showNextLevelDialog = true
                                                     }
                                                 } else {
                                                     VibrateManager.vibrateDevice(context)
                                                 }
-                                                isTouchEnable = true
                                                 enteredWord = ""
                                             })
                                     }
@@ -537,16 +496,6 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Image(painter = painterResource(R.drawable.restart),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clickable {
-                                            soundManager.playTapSound()
-                                            eligibleToNextLevel = 0
-                                            submittedWords.clear()
-                                            enteredWord = ""
-                                        })
                                 Image(painter = painterResource(R.drawable.home),
                                     contentDescription = "home",
                                     modifier = Modifier
@@ -572,62 +521,13 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
     }
 }
 
-@Composable
-fun CircularCharacterGrid(
-    characters: List<Char>, isTouchEnable: Boolean, onCharacterClick: (Char) -> Unit
-) {
-    val itemCount = characters.size
-    var radius = 70.dp // Adjust for balance
-    if (itemCount < 6) {
-        radius = 60.dp
-    } else if (itemCount > 6) {
-        radius = 80.dp
-    }
-    var circleSize = 220.dp
-    if (itemCount < 6) {
-        circleSize = 200.dp
-    } else if (itemCount > 6) {
-        circleSize = 240.dp
-    }
-    val angleStep = 360f / itemCount // Equal spacing
 
-    Box(
-        modifier = Modifier
-            .size(circleSize) // Define boundary size
-            .background(Color(0xFF3B2314), shape = CircleShape)
-            .border(width = 3.dp, shape = CircleShape, color = Color(0xFFD8B07A)),
-        contentAlignment = Alignment.Center
-    ) {
-        characters.forEachIndexed { index, char ->
-            val angle = angleStep * index
-            val radians = Math.toRadians(angle.toDouble())
-
-            val xOffset = (radius.value * cos(radians)).dp
-            val yOffset = (radius.value * sin(radians)).dp
-
-            Box(
-                modifier = Modifier.offset(x = xOffset, y = yOffset)
-            ) {
-
-            }
-        }
-    }
+private fun updateLevel(currentLevel: Int): SentenceModel {
+    return SentenceData.sentenceLevels[currentLevel]
 }
 
-
-private fun checkDuplicate(ans: List<String>, word: String): Boolean {
-    for (w in ans) {
-        if (w == word) return false
-    }
-    return true
-}
-
-private fun updateLevel(currentLevel: Int): LevelModel {
-    return DataList.wordFormationData[currentLevel]
-}
-
-private fun checkMatch(givenList: List<String>, input: String): Boolean {
-    return givenList.contains(input.toUpperCase(Locale.ROOT))
+private fun checkMatch(targetWord: String, input: String): Boolean {
+    return targetWord == input
 }
 
 private fun getBorderBoxSize(noOfChar: Int): Dp {
@@ -645,23 +545,16 @@ private fun getBorderBoxSize(noOfChar: Int): Dp {
     return 230.dp
 }
 
-private fun getHint(targetWords: List<String>, submittedWords: List<String>): String {
-    for (word in targetWords) {
-        if (word !in submittedWords) {
-            return word.toUpperCase(Locale.ROOT)
-        }
-    }
-    return ""
-}
-
 private fun getHFormat(word: String): String {
-    if (word.isEmpty()) return "" // Handle empty input
+    if (word.isEmpty()) return ""
     return word.first() + " _ ".repeat(word.length - 1)
 }
 
 
-//@Composable
-//@Preview(showBackground = true)
-//fun PlayBoardPrev() {
-//    PlayBoardScr()
-//}
+@Composable
+@Preview(showBackground = true)
+fun SFPPrev() {
+    val context = LocalContext.current
+    val navHostController = NavHostController(context)
+    SentenceFormPlayBoard(context, navHostController)
+}

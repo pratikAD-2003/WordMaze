@@ -144,3 +144,122 @@ fun DragSelectionWoodenBlocks2(
     }
 }
 
+
+@Composable
+fun DragSelectionWoodenBlocks3(
+    characters: List<Char>,
+    isTouchEnable: Boolean,
+    onCharacterClick: (Char) -> Unit,
+    onDragEnd: () -> Unit
+) {
+    val indexedCharacters = characters.mapIndexed { index, char -> char to index } // Unique identifier
+    val selectedBlocks = remember { mutableStateListOf<Pair<Char, Int>>() }
+    val boxSize = 50.dp
+
+    val boxPositions = remember { mutableStateMapOf<Pair<Char, Int>, Rect>() }
+    var isDragging by remember { mutableStateOf(false) }
+
+    val path = remember { Path() }
+    var lastPoint by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(isTouchEnable) {
+                if (isTouchEnable) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = { offset ->
+                            val startLetter = boxPositions.entries.find { (_, rect) ->
+                                rect.contains(offset)
+                            }?.key
+
+                            if (startLetter != null && !selectedBlocks.contains(startLetter)) {
+                                selectedBlocks.add(startLetter)
+                                onCharacterClick(startLetter.first) // Pass character only
+                                isDragging = true
+                                path.reset()
+                                path.moveTo(offset.x, offset.y)
+                                lastPoint = offset
+                            }
+                        },
+                        onDrag = { change, _ ->
+                            if (isDragging) {
+                                val position = change.position
+                                path.lineTo(position.x, position.y)
+                                lastPoint = position
+
+                                val selectedLetter = boxPositions.entries.find { (_, rect) ->
+                                    rect.contains(position)
+                                }?.key
+
+                                if (selectedLetter != null && !selectedBlocks.contains(selectedLetter)) {
+                                    selectedBlocks.add(selectedLetter)
+                                    onCharacterClick(selectedLetter.first)
+                                }
+                            }
+                        },
+                        onDragEnd = {
+                            isDragging = false
+                            path.reset()
+                            selectedBlocks.clear()
+                            boxPositions.clear()
+                            lastPoint = Offset.Zero
+                            onDragEnd()
+                        }
+                    )
+                }
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawPath(
+                path = path,
+                color = Color(0xFFD8B07A),
+                style = Stroke(width = 20f, cap = StrokeCap.Square)
+            )
+        }
+
+        Layout(
+            content = {
+                indexedCharacters.forEach { (letter, index) ->
+                    WoodenBlock(
+                        letter = letter.uppercaseChar(),
+                        modifier = Modifier.background(
+                            if (selectedBlocks.contains(letter to index)) Color.Green else Color.Transparent
+                        )
+                    )
+                }
+            },
+            measurePolicy = { measurables, constraints ->
+                val placeables = measurables.map { it.measure(constraints) }
+                val layoutWidth = constraints.maxWidth
+                val layoutHeight = constraints.maxHeight
+                val centerX = layoutWidth / 2
+                val centerY = layoutHeight / 2
+                var circleRadius = 75.dp.toPx()
+                when {
+                    characters.size < 4 -> circleRadius = 60.dp.toPx()
+                    characters.size < 6 -> circleRadius = 65.dp.toPx()
+                    characters.size > 6 -> circleRadius = 85.dp.toPx()
+                }
+                val angleStep = 360.0 / characters.size
+
+                layout(layoutWidth, layoutHeight) {
+                    indexedCharacters.forEachIndexed { index, (letter, charIndex) ->
+                        val angle = Math.toRadians(angleStep * index).toFloat()
+                        val x = (centerX + circleRadius * cos(angle) - boxSize.toPx() / 2)
+                        val y = (centerY + circleRadius * sin(angle) - boxSize.toPx() / 2)
+
+                        // Store position uniquely using (letter, index)
+                        boxPositions[letter to charIndex] = Rect(
+                            offset = Offset(x, y),
+                            size = Size(boxSize.toPx(), boxSize.toPx())
+                        )
+                        placeables[index].place(x.toInt(), y.toInt())
+                    }
+                }
+            }
+        )
+    }
+}
+

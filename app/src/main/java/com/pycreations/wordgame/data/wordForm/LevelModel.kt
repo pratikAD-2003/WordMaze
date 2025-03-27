@@ -1,4 +1,4 @@
-package com.pycreations.wordgame.data
+package com.pycreations.wordgame.data.wordForm
 
 data class LevelModel(
     val levelNumber: Int,

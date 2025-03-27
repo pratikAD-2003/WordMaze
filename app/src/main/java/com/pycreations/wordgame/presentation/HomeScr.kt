@@ -104,6 +104,7 @@ fun HomeScr(navHostController: NavHostController, context: Context) {
                     modifier = Modifier
                         .clickable {
                             soundManager.playTapSound()
+//                            navHostController.navigate(Route.SentenceFormBoard.route)
                             navHostController.navigate(Route.PlayBoardScreenR.route)
                         }
                         .clip(shape = RoundedCornerShape(10.dp))

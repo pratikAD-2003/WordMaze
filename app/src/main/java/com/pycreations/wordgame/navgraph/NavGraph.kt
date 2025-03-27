@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.pycreations.wordgame.presentation.HomeScr
 import com.pycreations.wordgame.presentation.PlayBoardScr
+import com.pycreations.wordgame.presentation.SentenceFormPlayBoard
 
 @Composable
 fun NavGraph() {
@@ -20,6 +21,9 @@ fun NavGraph() {
         }
         composable(Route.PlayBoardScreenR.route) {
             PlayBoardScr(navHostController,context)
+        }
+        composable(Route.SentenceFormBoard.route){
+            SentenceFormPlayBoard(context,navHostController)
         }
     }
 }

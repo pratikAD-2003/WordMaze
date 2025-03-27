@@ -19,6 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,18 @@ import com.pycreations.wordgame.navgraph.Route
 
 @Composable
 fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: () -> Unit) {
+    var earnedName by remember { mutableStateOf(0) }
+    if (levelName.toInt() < 50) {
+        earnedName = 10
+    } else if (levelName.toInt() < 100) {
+        earnedName = 15
+    } else if (levelName.toInt() < 150) {
+        earnedName = 20
+    } else if (levelName.toInt() < 200) {
+        earnedName = 25
+    } else {
+        earnedName = 30
+    }
     Dialog(onDismissRequest = {}) {
         Surface(
             color = Color.Transparent
@@ -87,7 +103,7 @@ fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: 
                             )
                             Spacer(Modifier.height(10.dp))
                             Text(
-                                "+5 Coins rewarded!",
+                                "+$earnedName Coins rewarded!",
                                 color = Color.White, // Dark text like engraving
                                 style = TextStyle(
                                     shadow = Shadow(
@@ -107,7 +123,6 @@ fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: 
                                 Row(
                                     modifier = Modifier
                                         .clickable {
-//                                navHostController.navigate(Route.PlayBoardScreenR.route)
                                             onHome(false)
                                         }
                                         .clip(shape = RoundedCornerShape(10.dp))
@@ -141,7 +156,6 @@ fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: 
                                 Row(
                                     modifier = Modifier
                                         .clickable {
-//                                navHostController.navigate(Route.PlayBoardScreenR.route)
                                             onNext()
                                         }
                                         .clip(shape = RoundedCornerShape(10.dp))
