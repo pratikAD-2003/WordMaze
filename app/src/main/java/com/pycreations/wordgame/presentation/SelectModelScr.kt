@@ -88,7 +88,6 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                             color = Color(0xFFD8B07A)
                         )
                         .clickable {
-//                        onWatchAds()
                             showAdsDialog = true
                         }
                         .padding(horizontal = 10.dp, vertical = 5.dp),
