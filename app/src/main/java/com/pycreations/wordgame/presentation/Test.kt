@@ -152,7 +152,7 @@ fun DragSelectionWoodenBlocks3(
     onCharacterClick: (Char) -> Unit,
     onDragEnd: () -> Unit
 ) {
-    val indexedCharacters = characters.mapIndexed { index, char -> char to index } // Unique identifier
+    var indexedCharacters = characters.mapIndexed { index, char -> char to index } // Unique identifier
     val selectedBlocks = remember { mutableStateListOf<Pair<Char, Int>>() }
     val boxSize = 50.dp
 
