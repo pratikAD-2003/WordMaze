@@ -57,6 +57,7 @@ import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
 import com.pycreations.wordgame.data.sentenceForm.SentenceData
 import com.pycreations.wordgame.data.sentenceForm.SentenceModel
+import com.pycreations.wordgame.databse.AdsServices
 import com.pycreations.wordgame.databse.BackgroundMusicManager
 import com.pycreations.wordgame.databse.SharedPrefFunctions
 import com.pycreations.wordgame.databse.SoundManager
@@ -85,6 +86,7 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
             )
         )
     }
+    var totalLevels by remember { mutableIntStateOf(SentenceData.sentenceLevels.size) }
 
     var levelData by remember { mutableStateOf(updateLevel(currentLevel)) }
     var cc by remember { mutableIntStateOf(SharedPrefFunctions.getCoins(context)) }
@@ -105,6 +107,8 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
     var showAdsDialog by remember { mutableStateOf(false) }
     var showWinAnimation by remember { mutableStateOf(false) }
     var triggerAnimation by remember { mutableStateOf(false) }
+    var allLevelDone by remember { mutableStateOf(false) }
+
 
     if (showWinAnimation) {
         triggerAnimation = true
@@ -116,12 +120,29 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
         )
     }
 
+    if (allLevelDone) {
+        WordFormationHintDialog(
+            text = "Congratulation!",
+            hint = "You have finished all the levels of 'Word Formation' category!\nPlease leave a mail to the developer for any feedback or add new levels!",
+            onWatchAds = {
+                SharedPrefFunctions.resetSentenceCompletion(context)
+                allLevelDone = false
+                navHostController.navigateUp()
+            },
+            onDismiss = {
+                allLevelDone = it
+            })
+    }
 
     if (showAdsDialog) {
         CustomAdsOptionDialog(onDismiss = {
             showAdsDialog = it
         }, onWatchAds = {
-
+            AdsServices.showRewardedAds(context, onFailed = {
+                showAdsDialog = false
+            }, onRewardEarn = {
+                showAdsDialog = false
+            })
         })
     }
     if (showHintDialog3) {
@@ -495,13 +516,11 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                                                     SharedPrefFunctions.updateLevelWordSentence(
                                                         context
                                                     )
-
                                                     CoroutineScope(Dispatchers.IO).launch {
                                                         delay(500)
                                                         cc =
                                                             SharedPrefFunctions.getCoins(context)
                                                         showWinAnimation = true
-//                                                        showNextLevelDialog = true
                                                     }
                                                 } else {
                                                     soundManager.playWrongAnsSound()

@@ -104,4 +104,17 @@ object SharedPrefFunctions {
         updateLevelCoin(context, getCurrentLevelWordSentence(context));
     }
 
+    fun resetWordFormationLevels(context: Context){
+        val levelPref = context.getSharedPreferences(LEVEL_DB, Context.MODE_PRIVATE)
+        val editor = levelPref.edit()
+        editor.putInt(LEVEL_KEY, 0);
+        editor.apply()
+    }
+
+    fun resetSentenceCompletion(context: Context){
+        val levelPref = context.getSharedPreferences(LEVEL_DB_SEN, Context.MODE_PRIVATE)
+        val editor = levelPref.edit()
+        editor.putInt(LEVEL_KEY_SENTENCE, 0);
+        editor.apply()
+    }
 }

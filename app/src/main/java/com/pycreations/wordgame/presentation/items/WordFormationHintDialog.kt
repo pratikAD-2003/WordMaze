@@ -113,7 +113,7 @@ fun WordFormationHintDialog(
                                 modifier = Modifier.padding(horizontal = 10.dp)
                             )
                             Spacer(Modifier.height(20.dp))
-                            if (text != "HINT") {
+                            if (text == "Ohhh! no...") {
                                 Row(
                                     modifier = Modifier
                                         .clip(shape = RoundedCornerShape(10.dp))
@@ -152,6 +152,65 @@ fun WordFormationHintDialog(
                                     )
                                 }
                                 Spacer(Modifier.height(20.dp))
+                            }else if(text == "Congratulation!"){
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = text,
+                                        fontSize = 22.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily(Font(R.font.boolagoo_regular)),
+                                        color = Color(0xFFD8B07A), // Dark text like engraving
+                                        style = TextStyle(
+                                            shadow = Shadow(
+                                                color = Color.Black.copy(alpha = 0.4f),
+                                                offset = Offset(2f, 2f),
+                                                blurRadius = 2f
+                                            )
+                                        )
+                                    )
+                                    Spacer(Modifier.height(20.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(color = Color(0xFF3B2314))
+                                            .border(
+                                                width = 2.dp,
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = Color(0xFFD8B07A)
+                                            )
+                                            .clickable {
+                                                onWatchAds()
+                                            }
+                                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center,
+                                    ) {
+                                        Text(
+                                            text = "Press to Reset Levels",
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = FontFamily(Font(R.font.boolagoo_regular)),
+                                            color = Color(0xFFD8B07A), // Dark text like engraving
+                                            style = TextStyle(
+                                                shadow = Shadow(
+                                                    color = Color.Black.copy(alpha = 0.4f),
+                                                    offset = Offset(2f, 2f),
+                                                    blurRadius = 2f
+                                                )
+                                            )
+                                        )
+                                        Spacer(Modifier.width(10.dp))
+                                        Image(
+                                            painter = painterResource(R.drawable.watch),
+                                            contentDescription = "watch",
+                                            modifier = Modifier.size(40.dp)
+                                        )
+                                    }
+                                    Spacer(Modifier.height(20.dp))
+                                }
                             }
                         }
                     }

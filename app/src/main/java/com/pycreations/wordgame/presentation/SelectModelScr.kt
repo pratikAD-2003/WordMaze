@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
+import com.pycreations.wordgame.databse.AdsServices
 import com.pycreations.wordgame.databse.SoundManager
 import com.pycreations.wordgame.navgraph.Route
 import com.pycreations.wordgame.presentation.items.CustomAdsOptionDialog
@@ -56,7 +57,11 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
         CustomAdsOptionDialog(onDismiss = {
             showAdsDialog = it
         }, onWatchAds = {
-
+            AdsServices.showRewardedAds(context, onFailed = {
+                showAdsDialog = false
+            }, onRewardEarn = {
+                showAdsDialog = false
+            })
         })
     }
     Box(

@@ -14,9 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.android.gms.ads.MobileAds
+import com.pycreations.wordgame.databse.AdsServices
 import com.pycreations.wordgame.databse.BackgroundMusicManager
 import com.pycreations.wordgame.navgraph.NavGraph
 import com.pycreations.wordgame.ui.theme.WordGameTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +29,12 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
 
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@MainActivity) {}
+        }
+        AdsServices.loadRewardedAds(baseContext)
         setContent {
             WordGameTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

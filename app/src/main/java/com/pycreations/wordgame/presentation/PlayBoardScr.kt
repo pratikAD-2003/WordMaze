@@ -54,8 +54,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
+import com.pycreations.wordgame.data.sentenceForm.SentenceData
 import com.pycreations.wordgame.data.wordForm.DataList
 import com.pycreations.wordgame.data.wordForm.LevelModel
+import com.pycreations.wordgame.databse.AdsServices
 import com.pycreations.wordgame.databse.BackgroundMusicManager
 import com.pycreations.wordgame.databse.SharedPrefFunctions
 import com.pycreations.wordgame.databse.SoundManager
@@ -105,14 +107,16 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
     var showHintDialog3 by remember { mutableStateOf(false) }
     var showNotEnoughCoins by remember { mutableStateOf(false) }
     var showAdsDialog by remember { mutableStateOf(false) }
+    var allLevelDone by remember { mutableStateOf(false) }
 
     var showWinAnimation by remember { mutableStateOf(false) }
     var triggerAnimation by remember { mutableStateOf(false) }
 
+    var totalLevels by remember { mutableIntStateOf(DataList.wordFormationData.size) }
+
     if (showWinAnimation) {
         triggerAnimation = true
     }
-
 
     var h by remember {
         mutableStateOf(
@@ -129,9 +133,28 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
         CustomAdsOptionDialog(onDismiss = {
             showAdsDialog = it
         }, onWatchAds = {
-
+            AdsServices.showRewardedAds(context, onFailed = {
+                showAdsDialog = false
+            }, onRewardEarn = {
+                showAdsDialog = false
+            })
         })
     }
+
+    if (allLevelDone) {
+        WordFormationHintDialog(
+            text = "Congratulation!",
+            hint = "You have finished all the levels of 'Word Formation' category!\nPlease leave a mail to the developer for any feedback or add new levels!",
+            onWatchAds = {
+                SharedPrefFunctions.resetWordFormationLevels(context)
+                allLevelDone = false
+                navHostController.navigateUp()
+            },
+            onDismiss = {
+                allLevelDone = it
+            })
+    }
+
     if (showHintDialog3) {
         WordFormationHintDialog(
             text = "HINT",
