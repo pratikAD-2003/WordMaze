@@ -1,6 +1,8 @@
 package com.pycreations.wordgame.presentation
 
 import android.content.Context
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,12 +22,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -62,6 +66,7 @@ import com.pycreations.wordgame.presentation.items.CustomHintDialog
 import com.pycreations.wordgame.presentation.items.CustomNextLevelDialog
 import com.pycreations.wordgame.presentation.items.CustomSettingDialog
 import com.pycreations.wordgame.presentation.items.WoodenBlockShow
+import com.pycreations.wordgame.presentation.items.WoodenBlockShow3
 import com.pycreations.wordgame.presentation.items.WordFormationHintDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +79,13 @@ import kotlin.math.sin
 @Composable
 fun PlayBoardScr(navHostController: NavHostController, context: Context) {
     var enteredWord by remember { mutableStateOf("") }
-    var currentLevel by remember { mutableIntStateOf(SharedPrefFunctions.getCurrentLevelWordFormation(context)) }
+    var currentLevel by remember {
+        mutableIntStateOf(
+            SharedPrefFunctions.getCurrentLevelWordFormation(
+                context
+            )
+        )
+    }
     var eligibleToNextLevel by remember { mutableIntStateOf(0) }
     var levelData by remember { mutableStateOf(updateLevel(currentLevel)) }
     var cc by remember { mutableStateOf(SharedPrefFunctions.getCoins(context)) }
@@ -94,6 +105,14 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
     var showHintDialog3 by remember { mutableStateOf(false) }
     var showNotEnoughCoins by remember { mutableStateOf(false) }
     var showAdsDialog by remember { mutableStateOf(false) }
+
+    var showWinAnimation by remember { mutableStateOf(false) }
+    var triggerAnimation by remember { mutableStateOf(false) }
+
+    if (showWinAnimation) {
+        triggerAnimation = true
+    }
+
 
     var h by remember {
         mutableStateOf(
@@ -362,7 +381,11 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            items(if (levelData.targetWords.size > 3) levelData.targetWords.takeLast(4) else levelData.targetWords) { word ->
+                            items(
+                                if (levelData.targetWords.size > 3) levelData.targetWords.takeLast(
+                                    4
+                                ) else levelData.targetWords
+                            ) { word ->
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     items(word.toCharArray().toTypedArray()) {
                                         Box(
@@ -395,8 +418,27 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                         ) {
                             items(submittedWords) { word ->
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-                                    items(word.toCharArray().toTypedArray()) {
-                                        WoodenBlockShow(it.uppercaseChar())
+//                                    items(word.toCharArray().toTypedArray()) {
+//                                        WoodenBlockShow(it.uppercaseChar())
+//                                    }
+                                    itemsIndexed(word.toCharArray().toTypedArray()) { index, word ->
+                                        var scale by remember { mutableStateOf(0f) }
+
+                                        // Animate scale from 0 to 1
+                                        val animatedScale by animateFloatAsState(
+                                            targetValue = scale,
+                                            animationSpec = tween(
+                                                durationMillis = 500,
+                                                delayMillis = index * 100
+                                            ),
+                                            label = "scaleAnimation"
+                                        )
+
+                                        // Start animation when the item appears
+                                        LaunchedEffect(Unit) {
+                                            scale = 1f
+                                        }
+                                        WoodenBlockShow3(word.uppercaseChar(),scale = animatedScale)
                                     }
                                 }
                             }
@@ -422,8 +464,24 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(enteredWord.toCharArray().toTypedArray()) { char ->
-                                WoodenBlockShow(char.uppercaseChar())
+                            itemsIndexed(enteredWord.toCharArray().toTypedArray()) { index, word ->
+                                var scale by remember { mutableStateOf(0f) }
+
+                                // Animate scale from 0 to 1
+                                val animatedScale by animateFloatAsState(
+                                    targetValue = scale,
+                                    animationSpec = tween(
+                                        durationMillis = 50,
+                                        delayMillis = index * 100
+                                    ),
+                                    label = "scaleAnimation"
+                                )
+
+                                // Start animation when the item appears
+                                LaunchedEffect(Unit) {
+                                    scale = 1f
+                                }
+                                WoodenBlockShow3(word.uppercaseChar(),scale = animatedScale)
                             }
                         }
                     }
@@ -500,12 +558,14 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                                     eligibleToNextLevel++
                                                     if (eligibleToNextLevel >= levelData.noOfInputFields) {
                                                         soundManager.playLevelCompleteSound()
-                                                        SharedPrefFunctions.updateLevelWordFormation(context)
+                                                        SharedPrefFunctions.updateLevelWordFormation(
+                                                            context
+                                                        )
                                                         CoroutineScope(Dispatchers.IO).launch {
                                                             delay(500)
                                                             cc =
                                                                 SharedPrefFunctions.getCoins(context)
-                                                            showNextLevelDialog = true
+                                                            showWinAnimation = true
                                                         }
                                                     }
                                                 } else {
@@ -566,6 +626,21 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                             }
                         }
                     }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center
+        ) {
+            if (showWinAnimation) {
+                CelebrationAnimation()
+                LaunchedEffect(Unit) {
+                    delay(2000)
+                    showWinAnimation = false
+                    showNextLevelDialog = true
                 }
             }
         }

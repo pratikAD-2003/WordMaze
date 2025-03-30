@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -67,6 +68,42 @@ fun WoodenBlockShow(letter: Char, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(40.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .border(2.dp, Color(0xFF3B2314), RoundedCornerShape(8.dp)) // Dark border
+            .shadow(4.dp, shape = RoundedCornerShape(8.dp)), // Soft depth
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFFD8B07A), Color(0xFFA96E3C)) // More balanced colors
+                    )
+                )
+        )
+        Text(
+            text = letter.toString(),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF3B2314), // Dark text like engraving
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color.Black.copy(alpha = 0.4f),
+                    offset = Offset(2f, 2f),
+                    blurRadius = 2f
+                )
+            )
+        )
+    }
+}
+
+@Composable
+fun WoodenBlockShow3(letter: Char, modifier: Modifier = Modifier,scale : Float) {
+    Box(
+        modifier = modifier
+            .size(40.dp).scale(scale)
             .clip(RoundedCornerShape(8.dp))
             .border(2.dp, Color(0xFF3B2314), RoundedCornerShape(8.dp)) // Dark border
             .shadow(4.dp, shape = RoundedCornerShape(8.dp)), // Soft depth

@@ -1,6 +1,9 @@
 package com.pycreations.wordgame.presentation
 
 import android.content.Context
+import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,12 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +67,7 @@ import com.pycreations.wordgame.presentation.items.CustomHintDialog
 import com.pycreations.wordgame.presentation.items.CustomNextLevelDialog
 import com.pycreations.wordgame.presentation.items.CustomSettingDialog
 import com.pycreations.wordgame.presentation.items.WoodenBlockShow
+import com.pycreations.wordgame.presentation.items.WoodenBlockShow3
 import com.pycreations.wordgame.presentation.items.WordFormationHintDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -97,12 +103,19 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
     var showHintDialog3 by remember { mutableStateOf(false) }
     var showNotEnoughCoins by remember { mutableStateOf(false) }
     var showAdsDialog by remember { mutableStateOf(false) }
+    var showWinAnimation by remember { mutableStateOf(false) }
+    var triggerAnimation by remember { mutableStateOf(false) }
+
+    if (showWinAnimation) {
+        triggerAnimation = true
+    }
 
     var h by remember {
         mutableStateOf(
             levelData.targetWord
         )
     }
+
 
     if (showAdsDialog) {
         CustomAdsOptionDialog(onDismiss = {
@@ -389,8 +402,27 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(enteredWord.toCharArray().toTypedArray()) { char ->
-                                WoodenBlockShow(char.uppercaseChar())
+//                            items(enteredWord.toCharArray().toTypedArray()) { char ->
+//                                WoodenBlockShow(char.uppercaseChar())
+//                            }
+                            itemsIndexed(enteredWord.toCharArray().toTypedArray()) { index, word ->
+                                var scale by remember { mutableStateOf(0f) }
+
+                                // Animate scale from 0 to 1
+                                val animatedScale by animateFloatAsState(
+                                    targetValue = scale,
+                                    animationSpec = tween(
+                                        durationMillis = 50,
+                                        delayMillis = index * 100
+                                    ),
+                                    label = "scaleAnimation"
+                                )
+
+                                // Start animation when the item appears
+                                LaunchedEffect(Unit) {
+                                    scale = 1f
+                                }
+                                WoodenBlockShow3(word.uppercaseChar(), scale = animatedScale)
                             }
                         }
                     }
@@ -462,11 +494,13 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                                                     SharedPrefFunctions.updateLevelWordSentence(
                                                         context
                                                     )
+
                                                     CoroutineScope(Dispatchers.IO).launch {
                                                         delay(500)
                                                         cc =
                                                             SharedPrefFunctions.getCoins(context)
-                                                        showNextLevelDialog = true
+                                                        showWinAnimation = true
+//                                                        showNextLevelDialog = true
                                                     }
                                                 } else {
                                                     VibrateManager.vibrateDevice(context)
@@ -515,6 +549,21 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                             }
                         }
                     }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center
+        ) {
+            if (showWinAnimation) {
+                CelebrationAnimation()
+                LaunchedEffect(Unit) {
+                    delay(2000)
+                    showWinAnimation = false
+                    showNextLevelDialog = true
                 }
             }
         }

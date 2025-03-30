@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.pycreations.wordgame.R
 import com.pycreations.wordgame.navgraph.Route
+import com.pycreations.wordgame.presentation.CoinAnimation
+import kotlinx.coroutines.delay
 
 @Composable
 fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: () -> Unit) {
@@ -195,6 +199,7 @@ fun CustomNextLevelDialog(levelName: String, onHome: (Boolean) -> Unit, onNext: 
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.FillWidth
                 )
+
             }
         }
     }
