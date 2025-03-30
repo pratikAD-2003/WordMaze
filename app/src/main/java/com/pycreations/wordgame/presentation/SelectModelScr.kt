@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -42,12 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
+import com.pycreations.wordgame.databse.SoundManager
 import com.pycreations.wordgame.navgraph.Route
 import com.pycreations.wordgame.presentation.items.CustomAdsOptionDialog
 
 @Composable
-fun SelectModeScr(context: Context,navHostController: NavHostController) {
+fun SelectModeScr(context: Context, navHostController: NavHostController) {
     var showAdsDialog by remember { mutableStateOf(false) }
+    val soundManager = SoundManager(context)
 
     if (showAdsDialog) {
         CustomAdsOptionDialog(onDismiss = {
@@ -76,7 +79,7 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     modifier = Modifier
@@ -88,6 +91,32 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                             color = Color(0xFFD8B07A)
                         )
                         .clickable {
+                            soundManager.playTapSound()
+                            navHostController.navigateUp()
+                        }
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.baseline_arrow_back_24),
+                        contentDescription = "watch",
+                        modifier = Modifier.size(25.dp),
+                        colorFilter = ColorFilter.tint(color = Color(0xFFD8B07A))
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .background(color = Color(0xFF3B2314))
+                        .border(
+                            width = 2.dp,
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFFD8B07A)
+                        )
+                        .clickable {
+                            soundManager.playTapSound()
                             showAdsDialog = true
                         }
                         .padding(horizontal = 10.dp, vertical = 5.dp),
@@ -134,6 +163,7 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                             )
                             .clickable {
 //                        onWatchAds()
+                                soundManager.playTapSound()
                                 navHostController.navigate(Route.PlayBoardScreenR.route)
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
@@ -174,7 +204,9 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                         Image(
                             painter = painterResource(R.drawable.watch),
                             contentDescription = "watch",
-                            modifier = Modifier.size(70.dp).padding(end = 10.dp)
+                            modifier = Modifier
+                                .size(70.dp)
+                                .padding(end = 10.dp)
                         )
                     }
                 }
@@ -191,6 +223,7 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                             )
                             .clickable {
 //                        onWatchAds()
+                                soundManager.playTapSound()
                                 navHostController.navigate(Route.SentenceFormBoard.route)
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
@@ -231,7 +264,9 @@ fun SelectModeScr(context: Context,navHostController: NavHostController) {
                         Image(
                             painter = painterResource(R.drawable.watch),
                             contentDescription = "watch",
-                            modifier = Modifier.size(70.dp).padding(end = 10.dp)
+                            modifier = Modifier
+                                .size(70.dp)
+                                .padding(end = 10.dp)
                         )
                     }
                 }

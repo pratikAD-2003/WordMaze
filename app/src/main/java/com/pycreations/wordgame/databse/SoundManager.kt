@@ -8,6 +8,8 @@ import com.pycreations.wordgame.R
 class SoundManager(context: Context) {
     private val soundPool = SoundPool(3, AudioManager.STREAM_MUSIC, 0)
     private val tapSound = soundPool.load(context, R.raw.tap_sound, 1)
+    private val correctAns = soundPool.load(context, R.raw.correct, 1)
+    private val wrongAns = soundPool.load(context, R.raw.wrong_answer, 1)
     private val levelCompleteSound = soundPool.load(context, R.raw.level_c, 1)
     private val prefs = context.getSharedPreferences(SharedPrefFunctions.SOUND_DB, Context.MODE_PRIVATE)
 
@@ -22,5 +24,17 @@ class SoundManager(context: Context) {
             soundPool.play(levelCompleteSound, 1f, 1f, 1, 0, 1f)
         }
     }
+
+    fun playCorrectAnsSound() {
+        if (prefs.getBoolean(SharedPrefFunctions.SOUND_DB, true)) {
+            soundPool.play(correctAns, 1f, 1f, 1, 0, 1f)
+        }
+    }
+    fun playWrongAnsSound() {
+        if (prefs.getBoolean(SharedPrefFunctions.SOUND_DB, true)) {
+            soundPool.play(wrongAns, 1f, 1f, 1, 0, 1f)
+        }
+    }
+
 }
 

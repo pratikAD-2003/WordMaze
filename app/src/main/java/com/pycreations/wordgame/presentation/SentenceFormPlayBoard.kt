@@ -490,6 +490,7 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                                                         levelData.targetWord, enteredWord
                                                     )
                                                 ) {
+                                                    soundManager.playCorrectAnsSound()
                                                     soundManager.playLevelCompleteSound()
                                                     SharedPrefFunctions.updateLevelWordSentence(
                                                         context
@@ -503,6 +504,7 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
 //                                                        showNextLevelDialog = true
                                                     }
                                                 } else {
+                                                    soundManager.playWrongAnsSound()
                                                     VibrateManager.vibrateDevice(context)
                                                 }
                                                 enteredWord = ""
@@ -561,6 +563,8 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
             if (showWinAnimation) {
                 CelebrationAnimation()
                 LaunchedEffect(Unit) {
+                    delay(1000)
+                    VibrateManager.vibrateLongMilliDevice(context)
                     delay(2000)
                     showWinAnimation = false
                     showNextLevelDialog = true

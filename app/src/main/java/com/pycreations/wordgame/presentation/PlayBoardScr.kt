@@ -438,7 +438,10 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                         LaunchedEffect(Unit) {
                                             scale = 1f
                                         }
-                                        WoodenBlockShow3(word.uppercaseChar(),scale = animatedScale)
+                                        WoodenBlockShow3(
+                                            word.uppercaseChar(),
+                                            scale = animatedScale
+                                        )
                                     }
                                 }
                             }
@@ -481,7 +484,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                 LaunchedEffect(Unit) {
                                     scale = 1f
                                 }
-                                WoodenBlockShow3(word.uppercaseChar(),scale = animatedScale)
+                                WoodenBlockShow3(word.uppercaseChar(), scale = animatedScale)
                             }
                         }
                     }
@@ -550,6 +553,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                                         submittedWords, enteredWord
                                                     )
                                                 ) {
+                                                    soundManager.playCorrectAnsSound()
                                                     submittedWords.add(enteredWord) // Store the submitted word
                                                     h = getHint(
                                                         targetWords = levelData.targetWords,
@@ -569,6 +573,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                                         }
                                                     }
                                                 } else {
+                                                    soundManager.playWrongAnsSound()
                                                     VibrateManager.vibrateDevice(context)
                                                 }
                                                 isTouchEnable = true
@@ -638,6 +643,8 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
             if (showWinAnimation) {
                 CelebrationAnimation()
                 LaunchedEffect(Unit) {
+                    delay(1000)
+                    VibrateManager.vibrateLongMilliDevice(context)
                     delay(2000)
                     showWinAnimation = false
                     showNextLevelDialog = true
