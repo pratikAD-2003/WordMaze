@@ -157,20 +157,6 @@ fun WordFormationHintDialog(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = text,
-                                        fontSize = 22.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = FontFamily(Font(R.font.boolagoo_regular)),
-                                        color = Color(0xFFD8B07A), // Dark text like engraving
-                                        style = TextStyle(
-                                            shadow = Shadow(
-                                                color = Color.Black.copy(alpha = 0.4f),
-                                                offset = Offset(2f, 2f),
-                                                blurRadius = 2f
-                                            )
-                                        )
-                                    )
                                     Spacer(Modifier.height(20.dp))
                                     Row(
                                         modifier = Modifier
@@ -201,12 +187,6 @@ fun WordFormationHintDialog(
                                                     blurRadius = 2f
                                                 )
                                             )
-                                        )
-                                        Spacer(Modifier.width(10.dp))
-                                        Image(
-                                            painter = painterResource(R.drawable.watch),
-                                            contentDescription = "watch",
-                                            modifier = Modifier.size(40.dp)
                                         )
                                     }
                                     Spacer(Modifier.height(20.dp))

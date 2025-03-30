@@ -59,7 +59,7 @@ object SharedPrefFunctions {
 
     fun getCurrentLevelWordFormation(context: Context): Int {
         val levelPref = context.getSharedPreferences(LEVEL_DB, Context.MODE_PRIVATE)
-        return levelPref.getInt(LEVEL_KEY, 0)
+        return levelPref.getInt(LEVEL_KEY, 233)
     }
 
     private fun updateLevelCoin(context: Context, currentLevel: Int) {
@@ -93,7 +93,7 @@ object SharedPrefFunctions {
 
     fun getCurrentLevelWordSentence(context: Context): Int {
         val levelPref = context.getSharedPreferences(LEVEL_DB_SEN, Context.MODE_PRIVATE)
-        return levelPref.getInt(LEVEL_KEY_SENTENCE, 0)
+        return levelPref.getInt(LEVEL_KEY_SENTENCE, 249)
     }
 
     fun updateLevelWordSentence(context: Context) {

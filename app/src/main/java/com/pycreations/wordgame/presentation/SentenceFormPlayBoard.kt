@@ -131,6 +131,7 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
             },
             onDismiss = {
                 allLevelDone = it
+                navHostController.navigateUp()
             })
     }
 
@@ -516,11 +517,16 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
                                                     SharedPrefFunctions.updateLevelWordSentence(
                                                         context
                                                     )
-                                                    CoroutineScope(Dispatchers.IO).launch {
-                                                        delay(500)
-                                                        cc =
-                                                            SharedPrefFunctions.getCoins(context)
-                                                        showWinAnimation = true
+                                                    if ( levelData.levelNumber.toInt() > SentenceData.sentenceLevels.size-1) {
+                                                        allLevelDone = true
+                                                        SharedPrefFunctions.resetSentenceCompletion(context)
+                                                    } else {
+                                                        CoroutineScope(Dispatchers.IO).launch {
+                                                            delay(500)
+                                                            cc =
+                                                                SharedPrefFunctions.getCoins(context)
+                                                            showWinAnimation = true
+                                                        }
                                                     }
                                                 } else {
                                                     soundManager.playWrongAnsSound()

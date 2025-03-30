@@ -112,8 +112,6 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
     var showWinAnimation by remember { mutableStateOf(false) }
     var triggerAnimation by remember { mutableStateOf(false) }
 
-    var totalLevels by remember { mutableIntStateOf(DataList.wordFormationData.size) }
-
     if (showWinAnimation) {
         triggerAnimation = true
     }
@@ -152,6 +150,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
             },
             onDismiss = {
                 allLevelDone = it
+                navHostController.navigateUp()
             })
     }
 
@@ -588,11 +587,20 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                                         SharedPrefFunctions.updateLevelWordFormation(
                                                             context
                                                         )
-                                                        CoroutineScope(Dispatchers.IO).launch {
-                                                            delay(500)
-                                                            cc =
-                                                                SharedPrefFunctions.getCoins(context)
-                                                            showWinAnimation = true
+                                                        if (levelData.levelNumber.toInt() > DataList.wordFormationData.size - 1) {
+                                                            allLevelDone = true
+                                                            SharedPrefFunctions.resetWordFormationLevels(
+                                                                context
+                                                            )
+                                                        } else {
+                                                            CoroutineScope(Dispatchers.IO).launch {
+                                                                delay(500)
+                                                                cc =
+                                                                    SharedPrefFunctions.getCoins(
+                                                                        context
+                                                                    )
+                                                                showWinAnimation = true
+                                                            }
                                                         }
                                                     }
                                                 } else {
