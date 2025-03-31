@@ -1,6 +1,7 @@
 package com.pycreations.wordgame.databse
 
 import android.content.Context
+import android.widget.Toast
 
 object SharedPrefFunctions {
     val MUSIC_DB = "check_music"
@@ -59,7 +60,7 @@ object SharedPrefFunctions {
 
     fun getCurrentLevelWordFormation(context: Context): Int {
         val levelPref = context.getSharedPreferences(LEVEL_DB, Context.MODE_PRIVATE)
-        return levelPref.getInt(LEVEL_KEY, 233)
+        return levelPref.getInt(LEVEL_KEY, 0)
     }
 
     private fun updateLevelCoin(context: Context, currentLevel: Int) {
@@ -84,6 +85,15 @@ object SharedPrefFunctions {
         return levelPref.getInt(FDFDF_KEY, levelPref.getInt(FDFDF_KEY, 100));
     }
 
+    fun updateC(context: Context, coin: Int) {
+        val levelPref = context.getSharedPreferences(FDHJKH_DFDF, Context.MODE_PRIVATE)
+        val editor = levelPref.edit()
+        editor.putInt(FDFDF_KEY, levelPref.getInt(FDFDF_KEY, 100) + coin);
+        editor.apply()
+        Toast.makeText(context,"Reward has been granted!",Toast.LENGTH_SHORT).show()
+    }
+
+
     fun subtractCoins(context: Context, coinToSub: Int) {
         val levelPref = context.getSharedPreferences(FDHJKH_DFDF, Context.MODE_PRIVATE)
         val editor = levelPref.edit()
@@ -93,7 +103,7 @@ object SharedPrefFunctions {
 
     fun getCurrentLevelWordSentence(context: Context): Int {
         val levelPref = context.getSharedPreferences(LEVEL_DB_SEN, Context.MODE_PRIVATE)
-        return levelPref.getInt(LEVEL_KEY_SENTENCE, 249)
+        return levelPref.getInt(LEVEL_KEY_SENTENCE, 0)
     }
 
     fun updateLevelWordSentence(context: Context) {
@@ -104,14 +114,14 @@ object SharedPrefFunctions {
         updateLevelCoin(context, getCurrentLevelWordSentence(context));
     }
 
-    fun resetWordFormationLevels(context: Context){
+    fun resetWordFormationLevels(context: Context) {
         val levelPref = context.getSharedPreferences(LEVEL_DB, Context.MODE_PRIVATE)
         val editor = levelPref.edit()
         editor.putInt(LEVEL_KEY, 0);
         editor.apply()
     }
 
-    fun resetSentenceCompletion(context: Context){
+    fun resetSentenceCompletion(context: Context) {
         val levelPref = context.getSharedPreferences(LEVEL_DB_SEN, Context.MODE_PRIVATE)
         val editor = levelPref.edit()
         editor.putInt(LEVEL_KEY_SENTENCE, 0);

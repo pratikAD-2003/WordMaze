@@ -10,6 +10,11 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import androidx.compose.runtime.*
+import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+
 
 object AdsServices {
     private var rewardedAd: RewardedAd? = null
@@ -74,5 +79,19 @@ object AdsServices {
             onFailed()
             Log.d("Ads_Status", "The rewarded ad wasn't ready yet.")
         }
+    }
+
+    @Composable
+    fun BannerAdView(context: Context) {
+        AndroidView(
+            factory = { ctx ->
+                AdView(ctx).apply {
+                    setAdSize(AdSize.BANNER)
+                    adUnitId = "ca-app-pub-3940256099942544/9214589741"
+                    loadAd(AdRequest.Builder().build())
+                }
+            },
+            update = { it.loadAd(AdRequest.Builder().build()) }
+        )
     }
 }

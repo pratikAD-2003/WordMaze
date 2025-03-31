@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.pycreations.wordgame.R
 import com.pycreations.wordgame.databse.AdsServices
+import com.pycreations.wordgame.databse.AdsServices.BannerAdView
+import com.pycreations.wordgame.databse.SharedPrefFunctions
 import com.pycreations.wordgame.databse.SoundManager
 import com.pycreations.wordgame.navgraph.Route
 import com.pycreations.wordgame.presentation.items.CustomAdsOptionDialog
@@ -60,6 +62,7 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
             AdsServices.showRewardedAds(context, onFailed = {
                 showAdsDialog = false
             }, onRewardEarn = {
+                SharedPrefFunctions.updateC(context,30)
                 showAdsDialog = false
             })
         })
@@ -276,6 +279,11 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
                     }
                 }
             }
+
+            // AdMob Banner Ad
+            BannerAdView(
+                context = context
+            )
         }
     }
 }

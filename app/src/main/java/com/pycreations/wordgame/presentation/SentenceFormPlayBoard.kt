@@ -142,6 +142,9 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
             AdsServices.showRewardedAds(context, onFailed = {
                 showAdsDialog = false
             }, onRewardEarn = {
+                SharedPrefFunctions.updateC(context,30)
+                cc =
+                    SharedPrefFunctions.getCoins(context)
                 showAdsDialog = false
             })
         })

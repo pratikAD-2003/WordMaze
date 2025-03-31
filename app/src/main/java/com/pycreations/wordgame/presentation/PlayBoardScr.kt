@@ -134,6 +134,9 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
             AdsServices.showRewardedAds(context, onFailed = {
                 showAdsDialog = false
             }, onRewardEarn = {
+                SharedPrefFunctions.updateC(context,30)
+                cc =
+                    SharedPrefFunctions.getCoins(context)
                 showAdsDialog = false
             })
         })
