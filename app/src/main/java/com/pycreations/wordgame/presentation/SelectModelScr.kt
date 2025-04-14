@@ -210,11 +210,11 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
                             )
                         }
                         Image(
-                            painter = painterResource(R.drawable.watch),
+                            painter = painterResource(R.drawable.wf),
                             contentDescription = "watch",
                             modifier = Modifier
                                 .size(70.dp)
-                                .padding(end = 10.dp)
+                                .padding(end = 2.dp).clip(shape = RoundedCornerShape(15.dp)).border(2.dp, color = Color(0xFFD8B07A), shape = RoundedCornerShape(15.dp))
                         )
                     }
                 }
@@ -270,11 +270,11 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
                             )
                         }
                         Image(
-                            painter = painterResource(R.drawable.watch),
+                            painter = painterResource(R.drawable.cs),
                             contentDescription = "watch",
                             modifier = Modifier
                                 .size(70.dp)
-                                .padding(end = 10.dp)
+                                .padding(end = 2.dp).clip(shape = RoundedCornerShape(15.dp)).border(2.dp, color = Color(0xFFD8B07A), shape = RoundedCornerShape(15.dp))
                         )
                     }
                 }

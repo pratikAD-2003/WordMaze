@@ -23,7 +23,8 @@ object AdsServices {
 
         RewardedAd.load(
             context,
-            "ca-app-pub-3940256099942544/5224354917",
+//            "ca-app-pub-3940256099942544/5224354917",
+            "ca-app-pub-3157695521448930/6786819488",
             adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -87,7 +88,7 @@ object AdsServices {
             factory = { ctx ->
                 AdView(ctx).apply {
                     setAdSize(AdSize.BANNER)
-                    adUnitId = "ca-app-pub-3940256099942544/9214589741"
+                    adUnitId = "ca-app-pub-3157695521448930/6111197912"
                     loadAd(AdRequest.Builder().build())
                 }
             },
