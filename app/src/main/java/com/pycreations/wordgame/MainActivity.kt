@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
             MobileAds.initialize(this@MainActivity) {}
         }
         AdsServices.loadRewardedAds(baseContext)
+//        AdsServices.loadInterstitialAds(this, onLoadFailed = {}, onDismiss = {})
         setContent {
             WordGameTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

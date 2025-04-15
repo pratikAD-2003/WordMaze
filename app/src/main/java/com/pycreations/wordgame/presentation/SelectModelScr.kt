@@ -1,5 +1,6 @@
 package com.pycreations.wordgame.presentation
 
+import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -172,7 +173,21 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
                             .clickable {
 //                        onWatchAds()
                                 soundManager.playTapSound()
-                                navHostController.navigate(Route.PlayBoardScreenR.route)
+                                val activity = context as? Activity
+                                if (activity != null) {
+                                    AdsServices.loadInterstitialAds(
+                                        context = activity,
+                                        onDismiss = {
+                                            navHostController.navigate(Route.PlayBoardScreenR.route)
+                                        },
+                                        onLoadFailed = {
+                                            navHostController.navigate(Route.PlayBoardScreenR.route)
+                                        }
+                                    )
+                                } else {
+                                    // Fallback: context is not an Activity
+                                    navHostController.navigate(Route.PlayBoardScreenR.route)
+                                }
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -232,7 +247,21 @@ fun SelectModeScr(context: Context, navHostController: NavHostController) {
                             .clickable {
 //                        onWatchAds()
                                 soundManager.playTapSound()
-                                navHostController.navigate(Route.SentenceFormBoard.route)
+                                val activity = context as? Activity
+                                if (activity != null) {
+                                    AdsServices.loadInterstitialAds(
+                                        context = activity,
+                                        onDismiss = {
+                                            navHostController.navigate(Route.SentenceFormBoard.route)
+                                        },
+                                        onLoadFailed = {
+                                            navHostController.navigate(Route.SentenceFormBoard.route)
+                                        }
+                                    )
+                                } else {
+                                    // Fallback: context is not an Activity
+                                    navHostController.navigate(Route.SentenceFormBoard.route)
+                                }
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,

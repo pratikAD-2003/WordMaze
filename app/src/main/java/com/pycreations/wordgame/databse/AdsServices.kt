@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 
 object AdsServices {
@@ -95,4 +97,52 @@ object AdsServices {
             update = { it.loadAd(AdRequest.Builder().build()) }
         )
     }
+
+    fun loadInterstitialAds(
+        context: Context,
+        onDismiss: () -> Unit,
+        onLoadFailed: () -> Unit
+    ) {
+        // Ensure context is an Activity
+        val activity = context as? Activity
+        if (activity == null) {
+            Log.e("Interstitial", "You must pass an Activity context!")
+            onLoadFailed()
+            return
+        }
+
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(
+            context,
+            "ca-app-pub-3157695521448930/9615931295", // Test Ad ID
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("Interstitial", "Ad failed to load: ${adError.message}")
+                    onLoadFailed()
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("Interstitial", "Ad loaded")
+
+                    interstitialAd.fullScreenContentCallback = object : FullScreenContentCallback() {
+                        override fun onAdDismissedFullScreenContent() {
+                            Log.d("Interstitial", "Ad dismissed")
+                            onDismiss()
+                        }
+
+                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                            Log.d("Interstitial", "Ad failed to show: ${adError.message}")
+                            onDismiss()
+                        }
+                    }
+
+                    interstitialAd.show(activity)
+                }
+            }
+        )
+    }
+
+
 }
