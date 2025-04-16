@@ -499,7 +499,7 @@ fun PlayBoardScr(navHostController: NavHostController, context: Context) {
                                 val animatedScale by animateFloatAsState(
                                     targetValue = scale,
                                     animationSpec = tween(
-                                        durationMillis = 50,
+                                        durationMillis = 30,
                                         delayMillis = index * 100
                                     ),
                                     label = "scaleAnimation"
