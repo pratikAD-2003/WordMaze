@@ -246,6 +246,7 @@ fun SentenceFormPlayBoard(context: Context, navHostController: NavHostController
             soundManager.playTapSound()
             currentLevel++
             levelData = updateLevel(currentLevel)
+            h = levelData.targetWord
             givenCharacters = levelData.givenCharacters
             borderBoxSize = getBorderBoxSize(givenCharacters.size)
             givenCharacters.shuffled()
